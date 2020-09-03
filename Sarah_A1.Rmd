@@ -138,6 +138,9 @@ df <- df %>%
 #appliyng the function to the demo df
 demo_test <- strintor(demo)
 
+
+#chchchhchch
+
 ```
 
 2d. Now that the nitty gritty details of the different data sets are fixed, we want to make a subset of each data set only containig the variables that we wish to use in the final data set.
