@@ -59,7 +59,7 @@ If you're not in a project in Rstudio, make sure to set your working directory h
 If you created an RStudio project, then your working directory (the directory with your data and code for these assignments) is the project directory.
 
 ```{r}
-pacman::p_load(tidyverse,janitor, lme4)
+pacman::p_load(tidyverse,janitor)
 ```
 
 Load the three data sets, after downloading them from dropbox and saving them in your working directory:
@@ -68,6 +68,9 @@ Load the three data sets, after downloading them from dropbox and saving them in
 * Word data: https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=0
 
 ```{r}
+lu_train <- read.csv("~/Uni stuff/Expmeth3/ExpMeth3_A1/LU_train.csv")
+token_train <- read.csv("~/Uni stuff/Expmeth3/ExpMeth3_A1/token_train.csv")
+demo_train <- read.csv("~/Uni stuff/Expmeth3/ExpMeth3_A1/demo_train.csv")
 
 ```
 
@@ -86,9 +89,11 @@ Pay particular attention to the variables indicating participant and visit.
 
 Tip: look through the chapter on data transformation in R for data science (http://r4ds.had.co.nz). Alternatively you can look into the package dplyr (part of tidyverse), or google "how to rename variables in R". Or check the janitor R package. There are always multiple ways of solving any problem and no absolute best method.
 
-
+2a.
 ```{r}
 
+colnames(demo_train)[colnames(demo_train)=="Child.ID"] <- "SUBJ"
+colnames(demo_train)[colnames(demo_train)=="Visit"] <- "VISIT"
 ```
 
 2b. Find a way to homogeneize the way "visit" is reported (visit1 vs. 1).
@@ -97,7 +102,7 @@ Tip: The stringr package is what you need. str_extract () will allow you to extr
 
 
 ```{r}
-
+lu_train$VISIT <- str_extract(lu_train$VISIT,"\\d")
 
 ```
 
@@ -110,6 +115,10 @@ Tip: You can either have one line of code for each child name that is to be chan
 
 ```{r}
 
+
+demo_train$SUBJ<-str_replace_all(demo_train$SUBJ,"[:punct:]" ,"")
+lu_train$SUBJ<-str_replace_all(lu_train$SUBJ,"[:punct:]" ,"")
+token_train$SUBJ<-str_replace_all(token_train$SUBJ,"[:punct:]" ,"")
 ```
 
 2d. Now that the nitty gritty details of the different data sets are fixed, we want to make a subset of each data set only containig the variables that we wish to use in the final data set.
