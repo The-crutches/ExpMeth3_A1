@@ -216,8 +216,8 @@ final_df$SUBJ <- as.numeric(final_df$SUBJ)
 
 final_df$Gender <- str_replace_all(final_df$Gender, c("1"="F","2"="M"))
 
-#May only be used once 
-#final_df$Diagnosis <- str_replace_all(final_df$Diagnosis, c("A"="ASD","B"="TD"))
+#The dollar in the A is because then you cant do dumb tuff  
+final_df$Diagnosis <- str_replace_all(final_df$Diagnosis, c("A$"="ASD","B"="TD"))
 
 write.csv(final_df, file = "autism_df")
 ```
