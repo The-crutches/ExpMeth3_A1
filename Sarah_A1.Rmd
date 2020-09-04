@@ -68,9 +68,9 @@ Load the three data sets, after downloading them from dropbox and saving them in
 * Word data: https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=0
 
 ```{r}
-LU <- read.csv('https://www.dropbox.com/s/usyauqm37a76of6/LU_train.csv?dl=1')
-demo <- read.csv('https://www.dropbox.com/s/lol8f5m4pgrpmto/demo_train.csv?dl=1')
-token <- read.csv('https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=1')
+LU <- read.csv('C:/Users/Sarah/OneDrive/Skrivebord/R_work/ExpMeth3_A1/LU_train.csv', header = T)
+demo <- read.csv('C:/Users/Sarah/OneDrive/Skrivebord/R_work/ExpMeth3_A1/demo_train.csv', header = T)
+token <- read.csv('C:/Users/Sarah/OneDrive/Skrivebord/R_work/ExpMeth3_A1/token_train.csv', header = T)
 ```
 
 Explore the 3 datasets (e.g. visualize them, summarize them, etc.). You will see that the data is messy, since the psychologist collected the demographic data, the linguist analyzed the length of utterance in May 2014 and the fumbling jack-of-all-trades analyzed the words several months later. 
@@ -114,32 +114,19 @@ Tip: You can either have one line of code for each child name that is to be chan
 
 
 ```{r}
-LU <- LU %>% 
-  mutate_all(funs(str_replace_all(., "\\.$", "")))
-
-demo <- demo %>% 
-  mutate_all(funs(str_replace_all(., "\\.$", "")))
-
-
-#using mutate_at instead
-token <- token %>% 
-  mutate_at('SUBJ', str_replace_all, "\\.$", "")
-
-
 
 # creating a function that can be applied unto each df easier
-strintor <- function(df){
+remove_dots <- function(df){
 
 df <- df %>%
-  mutate_at('SUBJ', str_replace_all, "\\.$", "")
+  mutate_at('SUBJ', str_replace_all, "\\.", "")
 
 }
 
 #appliyng the function to the demo df
-demo_test <- strintor(demo)
-
-
-#chchchhchch
+demo <- remove_dots(demo)
+token <- remove_dots(token)
+LU <- remove_dots(LU)
 
 ```
 
@@ -176,7 +163,11 @@ Most variables should make sense, here the less intuitive ones.
 Feel free to rename the variables into something you can remember (i.e. nonVerbalIQ, verbalIQ)
 
 ```{r}
+demo <- subset(demo, select = c("SUBJ", "VISIT", "Ethnicity", "Diagnosis", "Gender", "Age", "ADOS", "MullenRaw", "ExpressiveLangRaw", "Socialization"))
 
+LU <- subset(LU, select = c("SUBJ", "VISIT", "MOT_MLU", "CHI_MLU"))
+
+token <- subset(token, select = c("SUBJ", "VISIT", "types_MOT", "types_CHI", "tokens_MOT", "tokens_CHI"))
 ```
 
 2e. Finally we are ready to merge all the data sets into just one. 
@@ -186,8 +177,8 @@ Some things to pay attention to:
 * make sure to understand whether (and if so why) there are NAs in the dataset (e.g. some measures were not taken at all visits, some recordings were lost or permission to use was withdrawn)
 
 ```{r}
-
-
+df1 <- merge(demo, LU)
+df2 <- merge(df1, token)
 ```
 
 
@@ -202,6 +193,15 @@ A possible way to do so:
 
 
 ```{r}
+visit1 <- subset(df2, select=c("SUBJ", "VISIT","ADOS", "MullenRaw","ExpressiveLangRaw", "Socialization")) %>% filter(VISIT == '1')
+
+
+#renaming variables so i can merge the visit1 with df2 
+
+visit1_r<- rename(visit1, c("ADOS1"="ADOS", "MullenRaw1"="MullenRaw", "ExpressiveLangRaw1"="ExpressiveLangRaw", "Socialization1"="Socialization"))
+visit1_r[,2] = NULL
+
+df <- merge(visit1_r, df2)
 
 ```
 
@@ -213,7 +213,16 @@ Now we want to
 * Save the data set using into a csv file. Hint: look into write.csv()
 
 ```{r}
+df$SUBJ <- as.factor(df$SUBJ)
+df$SUBJ <- as.numeric(df$SUBJ)
 
+
+df$Gender <- str_replace_all(df$Gender, c('1' = 'F', '2' = 'M'))
+
+df$Diagnosis <- str_replace_all(df$Diagnosis, c('A$' = 'ASD', 'B' = 'TD'))
+
+
+write.csv(df, file = 'autism_df')
 ```
 
 
