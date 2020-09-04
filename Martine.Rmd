@@ -195,6 +195,8 @@ visit1 <- filter(visit1, visit1$VISIT == "1")
 #renaming variable so i can merge the visit1 with f_df 
 visit1_r<- rename(visit1, c("ADOS1"="ADOS", "MullenRaw1"="MullenRaw", "ExpressiveLangRaw1"="ExpressiveLangRaw", "Socialization1"="Socialization"))
 
+visit1_r <- subset(visit1_r, select = c("SUBJ","ADOS1", "MullenRaw1","ExpressiveLangRaw1", "Socialization1"))
+
 final_df <- merge(visit1_r, f_df)
 ```
 
