@@ -231,7 +231,7 @@ df_all1$Diagnosis <- plyr::revalue(df_all1$Diagnosis, c("A" = "ADS", "B" = "TD")
 
 
 #Saving
-write.csv(df_all1, file = "Autism_clean.csv")
+write.csv(df_all1, file = "Autism_clean.csv") 
 
 ```
 
