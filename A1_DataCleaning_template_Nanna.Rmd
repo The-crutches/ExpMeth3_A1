@@ -198,12 +198,11 @@ colnames(visit1)[colnames(visit1)=="MullenRaw"] <- "MullenRaw1"
 colnames(visit1)[colnames(visit1)=="ExpressiveLangRaw"] <- "ExpressiveLangRaw1"
 colnames(visit1)[colnames(visit1)=="Socialization"] <- "Socialization1"
 
+visit1 <- subset(visit1, select=c("SUBJ","ADOS1", "MullenRaw1","ExpressiveLangRaw1", "Socialization1"))
 
 #Merging visit 1 with the clean data
 
-df_all <- merge(df_all, visit1)
-  
-#hallooo
+df_all1 <- merge(df_all, visit1,  by = "SUBJ")
 
 
 ```
@@ -216,6 +215,23 @@ Now we want to
 * Save the data set using into a csv file. Hint: look into write.csv()
 
 ```{r}
+#Gender
+df_all1$Gender <- str_replace(df_all1$Gender, "1", "F")
+df_all1$Gender <- str_replace(df_all1$Gender, "2", "M")
+
+#SUBJ
+df_all1$SUBJ <- as.factor(df_all1$SUBJ)
+df_all1$SUBJ <- as.numeric(df_all1$SUBJ)
+
+#Diagnosis
+df_all1$Diagnosis <- as.factor(df_all1$Diagnosis)
+
+library(plyr)
+df_all1$Diagnosis <- plyr::revalue(df_all1$Diagnosis, c("A" = "ADS", "B" = "TD"))
+
+
+#Saving
+write.csv(df_all1, file = "Autism_clean.csv")
 
 ```
 
