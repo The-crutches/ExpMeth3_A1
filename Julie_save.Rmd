@@ -155,6 +155,11 @@ Feel free to rename the variables into something you can remember (i.e. nonVerba
 
 ```{r}
 
+finale_frame_demo <- subset(demo_train, select = c("SUBJ", "VISIT", "Ethnicity", "Diagnosis", "Gender", "Age", "ADOS", "MullenRaw", "ExpressiveLangRaw", "Socialization")) 
+finale_frame_lu <- subset(lu_train, select = c("SUBJ", "VISIT", "MOT_MLU", "CHI_MLU"))
+finale_frame_token <- subset(token_train, select = c("SUBJ", "VISIT", "types_MOT", "types_CHI", "tokens_MOT", "tokens_CHI"))
+
+
 ```
 
 2e. Finally we are ready to merge all the data sets into just one. 
@@ -164,6 +169,11 @@ Some things to pay attention to:
 * make sure to understand whether (and if so why) there are NAs in the dataset (e.g. some measures were not taken at all visits, some recordings were lost or permission to use was withdrawn)
 
 ```{r}
+first_merged_df <- merge(data.frame(finale_frame_demo, row.names=NULL), data.frame(finale_frame_lu, row.names=NULL), 
+  by = 0, all = TRUE)[-1]
+
+finale_merged_df <- merge(data.frame(first_merged_df, row.names=NULL), data.frame(finale_frame_token, row.names=NULL), 
+  by = 0, all = TRUE)[-1]
 
 
 ```
@@ -180,6 +190,7 @@ A possible way to do so:
 
 
 ```{r}
+visit_1 <- subset(finale_merged_df, select = )
 
 ```
 
