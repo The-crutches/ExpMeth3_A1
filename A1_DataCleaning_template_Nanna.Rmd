@@ -155,6 +155,9 @@ Feel free to rename the variables into something you can remember (i.e. nonVerba
 
 ```{r}
 
+demo_clean <- subset(demo, select = c("SUBJ", "VISIT", "Diagnosis" , "Ethnicity" , "Gender", "Age", "ADOS", "MullenRaw", "ExpressiveLangRaw", "Socialization" ))
+utter_clean <- subset(utter, select = c("SUBJ", "VISIT", "MOT_MLU", "CHI_MLU" ))
+token_clean <- subset(word_token, select = c("SUBJ", "VISIT", "types_MOT","types_CHI", "tokens_MOT", "tokens_CHI"))
 
 ```
 
@@ -166,6 +169,8 @@ Some things to pay attention to:
 
 ```{r}
 
+df_all<-merge(demo_clean, utter_clean)
+df_all<-merge(df_all, token_clean)
 
 ```
 
@@ -181,6 +186,24 @@ A possible way to do so:
 
 
 ```{r}
+#Selecting variables
+visit1 <- subset(df_all, select=c("SUBJ", "VISIT","ADOS", "MullenRaw","ExpressiveLangRaw", "Socialization"))
+#Filtering for visit 1
+visit1 <- dplyr::filter(visit1, visit1$VISIT == "1")
+
+#Renaming clinical variables
+
+colnames(visit1)[colnames(visit1)=="ADOS"] <- "ADOS1"
+colnames(visit1)[colnames(visit1)=="MullenRaw"] <- "MullenRaw1"
+colnames(visit1)[colnames(visit1)=="ExpressiveLangRaw"] <- "ExpressiveLangRaw1"
+colnames(visit1)[colnames(visit1)=="Socialization"] <- "Socialization1"
+
+
+#Merging visit 1 with the clean data
+
+df_all <- merge(df_all, visit1)
+  
+
 
 ```
 
