@@ -59,7 +59,7 @@ If you're not in a project in Rstudio, make sure to set your working directory h
 If you created an RStudio project, then your working directory (the directory with your data and code for these assignments) is the project directory.
 
 ```{r}
-pacman::p_load(tidyverse,janitor, lme4)
+pacman::p_load(tidyverse,janitor)
 ```
 
 Load the three data sets, after downloading them from dropbox and saving them in your working directory:
@@ -68,7 +68,9 @@ Load the three data sets, after downloading them from dropbox and saving them in
 * Word data: https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=0
 
 ```{r}
-
+LU <- read.csv('https://www.dropbox.com/s/usyauqm37a76of6/LU_train.csv?dl=1')
+demo <- read.csv('https://www.dropbox.com/s/lol8f5m4pgrpmto/demo_train.csv?dl=1')
+token <- read.csv('https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=1')
 ```
 
 Explore the 3 datasets (e.g. visualize them, summarize them, etc.). You will see that the data is messy, since the psychologist collected the demographic data, the linguist analyzed the length of utterance in May 2014 and the fumbling jack-of-all-trades analyzed the words several months later. 
@@ -88,6 +90,8 @@ Tip: look through the chapter on data transformation in R for data science (http
 
 
 ```{r}
+colnames(demo)[1] <- 'SUBJ' 
+colnames(demo)[2] <- 'VISIT'
 
 ```
 
@@ -97,7 +101,8 @@ Tip: The stringr package is what you need. str_extract () will allow you to extr
 
 
 ```{r}
-
+token$VISIT <- str_extract(token$VISIT, "\\d")
+LU$VISIT <- str_extract(LU$VISIT, "\\d")
 
 ```
 
@@ -109,6 +114,29 @@ Tip: You can either have one line of code for each child name that is to be chan
 
 
 ```{r}
+LU <- LU %>% 
+  mutate_all(funs(str_replace_all(., "\\.$", "")))
+
+demo <- demo %>% 
+  mutate_all(funs(str_replace_all(., "\\.$", "")))
+
+
+#using mutate_at instead
+token <- token %>% 
+  mutate_at('SUBJ', str_replace_all, "\\.$", "")
+
+
+
+# creating a function that can be applied unto each df easier
+strintor <- function(df){
+
+df <- df %>%
+  mutate_at('SUBJ', str_replace_all, "\\.$", "")
+
+}
+
+#applyng the function to the demo df
+demo_test <- strintor(demo)
 
 ```
 
