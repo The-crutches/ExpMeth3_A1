@@ -223,7 +223,7 @@ final_df$SUBJ <- as.factor(final_df$SUBJ)
 final_df$SUBJ <- as.numeric(final_df$SUBJ)
 
 #Gender to f - m 
-final_df$Gender <- str_replace_all(final_df$Gender, c("1"="F","2"="M"))
+final_df$Gender <- str_replace_all(final_df$Gender, c("1"="M","2"="F"))
 
 #Changing diagnosis labels from A to ASD and B to TD. The dollar in the A is because then you cant do dumb stuff  
 final_df$Diagnosis <- str_replace_all(final_df$Diagnosis, c("A$"="ASD","B"="TD"))
