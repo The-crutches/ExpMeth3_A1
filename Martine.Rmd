@@ -246,6 +246,18 @@ List all kids who:
 
 ```{r}
 
+#Kids dataframe with above 2.7 morphemes 
+final_df$CHI_MLU <- as.numeric(final_df$CHI_MLU)
+final_df$SUBJ <- as.numeric(final_df$SUBJ)
+mlu2_7 <- final_df %>% group_by(SUBJ) %>% filter(mean(CHI_MLU)>2.7)
+#This counts how many children had a mean above 2.7 
+cmlu2_7 <- mlu2_7 %>% count(SUBJ)
+
+#Kids under 1.5 mlu in first visit 
+mlu1_5 <- final_df %>% filter(VISIT == 1, CHI_MLU<1.5)
+
+#Kids that have not completed all trials. I use the mean function to indicate that it is only those with a mean visit of 3.5 that have completed all trials, because 1+2+3+4+5+6=21, 21/6=3.5 
+all_trials <- final_df %>% group_by(SUBJ) %>% filter(mean(VISIT)==3.5)
 
 ```
 
@@ -256,7 +268,11 @@ USING ARRANGE
 2. Sort kids to find the kid who produced the least amount of words on the 1st visit.
 
 ```{r}
+#1 produced most words on the 6th visit 
+visit6_token <- final_df %>% filter(VISIT==6) %>% arrange(desc(tokens_CHI))
 
+#Kids least words on 1st visit 
+visit1_token <- final_df %>% filter(VISIT == 1) %>% arrange(tokens_CHI)
 
 ```
 
@@ -266,6 +282,11 @@ USING SELECT
 2. What happens if you include the name of a variable multiple times in a select() call?
 
 ```{r}
+#Making new dataframe with subj, visit, ASD, mlu, word tokens
+
+asd_df <- final_df %>% filter(Diagnosis=="ASD") %>% subset(select = c("SUBJ", "VISIT", "CHI_MLU","tokens_CHI", "Diagnosis"))
+
+#Question 2: it just adds another column and adds 1 to the varible name 
 
 ```
 
@@ -276,6 +297,9 @@ USING MUTATE, SUMMARISE and PIPES
 3. The solution to task above enables us to assess the average amount of words produced by each child. Why don't we just use these average values to describe the language production of the children? What is the advantage of keeping all the data?
 
 ```{r}
+#Adding column with mean number of words 
+asd_df <- asd_df %>% group_by(SUBJ) %>% mutate(mean_words = mean(tokens_CHI))
+
 
 
 ```
