@@ -203,6 +203,9 @@ visit1_r[,2] = NULL
 
 df <- merge(visit1_r, df2)
 
+#renaming variables for easy recall
+df <- rename(df, c('nonverbalIQ' = 'MullenRaw', 'nonverbalIQ1' = 'MullenRaw1', 'verbalIQ' = 'ExpressiveLangRaw', 'verbalIQ1' = 'ExpressiveLangRaw'))
+
 ```
 
 2g. Final touches
@@ -216,8 +219,8 @@ Now we want to
 df$SUBJ <- as.factor(df$SUBJ)
 df$SUBJ <- as.numeric(df$SUBJ)
 
-
-df$Gender <- str_replace_all(df$Gender, c('1' = 'F', '2' = 'M'))
+#is it?
+df$Gender <- str_replace_all(df$Gender, c('1' = 'M', '2' = 'F'))
 
 df$Diagnosis <- str_replace_all(df$Diagnosis, c('A$' = 'ASD', 'B' = 'TD'))
 
@@ -238,8 +241,11 @@ List all kids who:
 3. have not completed all trials. Tip: Use pipes to solve this
 
 ```{r}
+high_mlu <- filter(df, df$CHI_MLU >= 2.7)
+low_mlu_1 <- filter(df, df$CHI_MLU <= 1.5 & df$VISIT == '1')
 
-
+trials <- filter(df, df$VISIT != 6)
+  
 ```
 
 
@@ -249,7 +255,8 @@ USING ARRANGE
 2. Sort kids to find the kid who produced the least amount of words on the 1st visit.
 
 ```{r}
-
+most_words <- arrange(df, desc(tokens_CHI)) %>% filter(VISIT == '6')
+least_words <- arrange(df, tokens_CHI) %>% filter(VISIT == '1')
 
 ```
 
@@ -259,7 +266,11 @@ USING SELECT
 2. What happens if you include the name of a variable multiple times in a select() call?
 
 ```{r}
+asd <- select(df, 'SUBJ', 'Diagnosis', 'CHI_MLU', 'tokens_CHI') %>% filter(Diagnosis == 'ASD')
 
+test <- select(df, 'SUBJ', 'VISIT', 'VISIT')
+view(test)
+#nothing, it only keeps the first call
 ```
 
 
@@ -270,5 +281,8 @@ USING MUTATE, SUMMARISE and PIPES
 
 ```{r}
 
+df5 <- df %>% group_by(VISIT) %>% mutate(mean_words = mean(tokens_CHI + tokens_MOT))
+
+df5 <- df %>% group_by(SUBJ) %>% mutate(mean_chi_words = mean(tokens_CHI))
 
 ```
